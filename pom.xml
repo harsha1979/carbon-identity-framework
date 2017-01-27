@@ -39,12 +39,14 @@
     </scm>
 
     <modules>
-        <module>components/org.wso2.carbon.identity.gateway.common</module>
+        <module>components/application-mgt</module>
+        <module>components/org.wso2.carbon.identity.application.authentication.framework</module>
+        <!--module>components/org.wso2.carbon.identity.gateway.common</module>
         <module>components/org.wso2.carbon.identity.gateway.api</module>
         <module>components/org.wso2.carbon.identity.gateway</module>
         <module>components/org.wso2.carbon.identity.gateway.resource</module>
         <module>features/org.wso2.carbon.identity.gateway.feature</module>
-        <module>features/org.wso2.carbon.identity.gateway.resource.feature</module>
+        <module>features/org.wso2.carbon.identity.gateway.resource.feature</module-->
     </modules>
 
     <dependencyManagement>
@@ -95,6 +97,16 @@
                 <version>${carbon.identity.commons.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.wso2.carbon.identity.mgt</groupId>
+                <artifactId>org.wso2.carbon.identity.claim</artifactId>
+                <version>${carbon.identity.claim.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.mgt</groupId>
+                <artifactId>org.wso2.carbon.identity.mgt</artifactId>
+                <version>${carbon.identity.mgt.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon.identity.gateway</groupId>
@@ -180,6 +192,8 @@
         <carbon.kernel.package.export.version>5.1.0</carbon.kernel.package.export.version>
         <carbon.kernel.package.import.version.range>[5.0.0, 6.0.0)</carbon.kernel.package.import.version.range>
 
+        <carbon.identity.mgt.version>1.0.0-SNAPSHOT</carbon.identity.mgt.version>
+        <carbon.identity.claim.version>1.0.0-SNAPSHOT</carbon.identity.claim.version>
         <carbon.identity.commons.version>6.0.0-SNAPSHOT</carbon.identity.commons.version>
         <carbon.identity.common.import.version.range>[6.0.0-SNAPSHOT, 7.0.0)
         </carbon.identity.common.import.version.range>
