@@ -31,13 +31,14 @@ import org.wso2.carbon.identity.application.authentication.framework.context.Aut
 import org.wso2.carbon.identity.application.authentication.framework.exception.FrameworkException;
 import org.wso2.carbon.identity.application.authentication.framework.handler.claims.ClaimHandler;
 import org.wso2.carbon.identity.application.authentication.framework.internal.FrameworkServiceComponent;
+import org.wso2.carbon.identity.application.authentication.framework.internal.FrameworkServiceDataHolder;
 import org.wso2.carbon.identity.application.authentication.framework.model.AuthenticatedUser;
 import org.wso2.carbon.identity.application.authentication.framework.util.FrameworkConstants;
 import org.wso2.carbon.identity.application.authentication.framework.util.FrameworkUtils;
 import org.wso2.carbon.identity.application.common.model.ClaimMapping;
 import org.wso2.carbon.identity.application.mgt.ApplicationConstants;
-import org.wso2.carbon.identity.claim.metadata.mgt.ClaimMetadataHandler;
-import org.wso2.carbon.identity.claim.metadata.mgt.exception.ClaimMetadataException;
+import org.wso2.carbon.identity.claim.exception.ClaimResolvingServiceException;
+import org.wso2.carbon.identity.claim.service.ClaimResolvingService;
 import org.wso2.carbon.identity.core.util.IdentityCoreConstants;
 import org.wso2.carbon.identity.application.common.model.ClaimConfig;
 import org.wso2.carbon.identity.application.common.model.ServiceProvider;
@@ -54,6 +55,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DefaultClaimHandler implements ClaimHandler {
 
@@ -721,12 +723,16 @@ public class DefaultClaimHandler implements ClaimHandler {
                                                  String tenantDomain, boolean useLocalDialectAsKey)
             throws FrameworkException {
 
-        Map<String, String> claimMapping = null;
+        Map<String, String> claimMapping;
         try {
-            claimMapping = ClaimMetadataHandler.getInstance()
-                    .getMappingsMapFromOtherDialectToCarbon(otherDialect, keySet, tenantDomain,
-                                                            useLocalDialectAsKey);
-        } catch (ClaimMetadataException e) {
+            ClaimResolvingService claimResolvingService = FrameworkServiceDataHolder.getInstance()
+                    .getClaimResolvingService();
+            Map<String, String> claimMappingTmp = claimResolvingService.getClaimMapping(otherDialect);
+            claimMapping = keySet.stream()
+                    .filter(key -> claimMappingTmp.get(key) != null)
+                    .collect(Collectors.toMap(key -> key, claimMappingTmp::get));
+
+        }  catch (ClaimResolvingServiceException e) {
             throw new FrameworkException("Error while loading mappings.", e);
         }
 

@@ -80,8 +80,8 @@ import org.wso2.carbon.identity.application.common.model.ClaimMapping;
 import org.wso2.carbon.identity.application.common.model.FederatedAuthenticatorConfig;
 import org.wso2.carbon.identity.application.common.model.IdentityProvider;
 import org.wso2.carbon.identity.application.common.model.Property;
-import org.wso2.carbon.identity.claim.metadata.mgt.ClaimMetadataHandler;
-import org.wso2.carbon.identity.claim.metadata.mgt.exception.ClaimMetadataException;
+import org.wso2.carbon.identity.claim.exception.ClaimResolvingServiceException;
+import org.wso2.carbon.identity.claim.service.ClaimResolvingService;
 import org.wso2.carbon.identity.core.model.CookieBuilder;
 import org.wso2.carbon.identity.core.model.IdentityCookieConfig;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
@@ -107,6 +107,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class FrameworkUtils {
 
@@ -1117,11 +1118,16 @@ public class FrameworkUtils {
 
         if (useLocalClaimDialect) {
             Map<String, String> extAttributesValueMap = FrameworkUtils.getClaimMappings(claimMappings, false);
+            ClaimResolvingService claimResolvingService = FrameworkServiceDataHolder.getInstance()
+                    .getClaimResolvingService();
             Map<String, String> mappedAttrs = null;
             try {
-                mappedAttrs = ClaimMetadataHandler.getInstance().getMappingsMapFromOtherDialectToCarbon(otherDialect,
-                        extAttributesValueMap.keySet(), context.getTenantDomain(), true);
-            } catch (ClaimMetadataException e) {
+                Map<String, String> claimMappingTmp = claimResolvingService.getClaimMapping(otherDialect);
+                mappedAttrs = extAttributesValueMap.keySet().stream()
+                        .filter(key -> claimMappingTmp.get(key) != null)
+                        .collect(Collectors.toMap(key -> key, claimMappingTmp::get));
+
+            } catch (ClaimResolvingServiceException e) {
                 throw new FrameworkException("Error while loading claim mappings.", e);
             }
 

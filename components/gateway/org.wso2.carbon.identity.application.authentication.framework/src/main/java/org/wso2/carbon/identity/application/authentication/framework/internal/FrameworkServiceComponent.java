@@ -53,6 +53,7 @@ import org.wso2.carbon.identity.application.common.model.FederatedAuthenticatorC
 import org.wso2.carbon.identity.application.common.model.LocalAuthenticatorConfig;
 import org.wso2.carbon.identity.application.common.model.Property;
 import org.wso2.carbon.identity.application.common.model.RequestPathAuthenticatorConfig;
+import org.wso2.carbon.identity.claim.service.ClaimResolvingService;
 import org.wso2.carbon.identity.core.handler.HandlerComparator;
 import org.wso2.carbon.identity.core.util.IdentityCoreInitializedEvent;
 import org.wso2.carbon.registry.core.service.RegistryService;
@@ -413,4 +414,26 @@ public class FrameworkServiceComponent {
             FrameworkServiceDataHolder.getInstance().setAuthnDataPublisherProxy(null);
         }
     }
+
+
+    @Reference(
+            name = "service.claim.resolver",
+            service = ClaimResolvingService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetClaimResolvingService"
+    )
+    protected void setClaimResolvingService(ClaimResolvingService claimResolvingService) {
+        if (log.isDebugEnabled()) {
+            log.debug("Setting ClaimResolvingService");
+        }
+        FrameworkServiceDataHolder.getInstance().setClaimResolvingService(claimResolvingService);
+    }
+    protected void unsetClaimResolvingService(ClaimResolvingService claimResolvingService) {
+        if (log.isDebugEnabled()) {
+            log.debug("unSetting ClaimResolvingService");
+        }
+        FrameworkServiceDataHolder.getInstance().setClaimResolvingService(claimResolvingService);
+    }
+
 }

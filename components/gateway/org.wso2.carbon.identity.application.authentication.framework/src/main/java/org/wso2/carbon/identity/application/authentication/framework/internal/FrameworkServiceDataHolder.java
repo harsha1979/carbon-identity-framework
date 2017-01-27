@@ -24,6 +24,7 @@ import org.wso2.carbon.identity.application.authentication.framework.Authenticat
 import org.wso2.carbon.identity.application.authentication.framework.inbound.HttpIdentityRequestFactory;
 import org.wso2.carbon.identity.application.authentication.framework.inbound.HttpIdentityResponseFactory;
 import org.wso2.carbon.identity.application.authentication.framework.inbound.IdentityProcessor;
+import org.wso2.carbon.identity.claim.service.ClaimResolvingService;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.user.core.service.RealmService;
 
@@ -43,6 +44,8 @@ public class FrameworkServiceDataHolder {
     private List<HttpIdentityRequestFactory> httpIdentityRequestFactories = new ArrayList<HttpIdentityRequestFactory>();
     private List<HttpIdentityResponseFactory> httpIdentityResponseFactories = new ArrayList<>();
     private AuthenticationDataPublisher authnDataPublisherProxy = null;
+
+    private ClaimResolvingService claimResolvingService = null;
 
     private FrameworkServiceDataHolder() {
         setNanoTimeReference(System.nanoTime());
@@ -117,4 +120,11 @@ public class FrameworkServiceDataHolder {
         this.authnDataPublisherProxy = authnDataPublisherProxy;
     }
 
+    public ClaimResolvingService getClaimResolvingService() {
+        return claimResolvingService;
+    }
+
+    public void setClaimResolvingService(ClaimResolvingService claimResolvingService) {
+        this.claimResolvingService = claimResolvingService;
+    }
 }
